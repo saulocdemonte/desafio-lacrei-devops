@@ -1,0 +1,12 @@
+{
+  "name": "desafio-lacrei-app",
+  "version": "1.0.0",
+  "description": "Aplicação de teste para o desafio DevOps da Lacrei Saúde.",
+  "main": "app.js",
+  "scripts": {
+    "start": "node app.js"
+  },
+  "dependencies": {
+    "express": "^4.18.2"
+  }
+}
