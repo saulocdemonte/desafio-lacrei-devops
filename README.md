@@ -94,17 +94,20 @@ A estratégia de rollback adotada para este projeto utiliza a funcionalidade nat
 
 4.  **Resultado:** Ao final da execução, o pipeline terá reconstruído a imagem Docker da versão antiga, a enviado para o Docker Hub com a tag `latest` e a implantado no servidor EC2. Isso efetivamente substitui a versão defeituosa pela última versão estável conhecida.
 
-#### Proposta de Melhoria para o futuro (Rollback Avançado)
+#### Proposta de Futura Melhoria (Rollback Avançado)
 
-Uma abordagem mais rápida e robusta, ideal para ambientes de produção, seria aprimorar o pipeline para criar tags de imagem Docker versionadas (ex: usando a hash do commit Git, como `saulocdemonte/desafio-lacrei-app:a1b2c3d`).
+Uma abordagem mais rápida e robusta, ideal para ambientes de produção, seria aprimorar o pipeline para criar tags de imagem Docker versionadas (ex: usando a hash do commit Git, como `saulodemonte/desafio-lacrei-app:a1b2c3d`).
 
-Com isso, o rollback seria quase instantâneo, executado diretamente no servidor via SSH, sem a necessidade de um novo build:
+Com isso, o rollback seria quase instantâneo, executado diretamente no servidor via SSH, sem a necessidade de um novo build, seguindo os passos:
 
-# Conectar ao servidor via SSH
-# Parar e remover o contêiner atual
+```bash
+# 1. Conectar-se ao servidor EC2 via SSH
+
+# 2. Parar e remover o contêiner atual
 docker stop lacrei-container && docker rm lacrei-container
-# Iniciar o contêiner com a tag da versão estável anterior
-docker run -d -p 80:3000 --name lacrei-container saulocdemonte/desafio-lacrei-app:<hash_do_commit_estavel>
+
+# 3. Iniciar o contêiner com a tag da versão estável anterior
+docker run -d -p 80:3000 --name lacrei-container saulodemonte/desafio-lacrei-app:<hash_do_commit_estavel>
 
 ---
 
