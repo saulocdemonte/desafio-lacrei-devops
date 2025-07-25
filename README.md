@@ -78,6 +78,10 @@ Durante a configuração do ambiente e do pipeline, diversos desafios foram enco
 - **Problema:** Após o primeiro deploy bem-sucedido, acessar o IP do servidor no navegador resultava na mensagem `Cannot GET /`.
 - **Solução:** O diagnóstico revelou que não era um erro de deploy, mas sim de acesso à rota incorreta. A aplicação foi desenvolvida para responder apenas no endpoint `/status`. A solução foi acessar a URL completa (`http://<IP_DO_SERVIDOR>/status`), que validou o sucesso da implantação.
 
+#### 5. Falha no Pipeline de CI/CD Após Mudança de IP
+- **Problema:** Após a transição de um IP dinâmico para um IP Fixo (Elástico), o pipeline de CI/CD começou a falhar consistentemente na etapa de deploy. O log de erro indicava um `i/o timeout` na conexão SSH para a porta 22.
+- **Solução:** A investigação mostrou que o segredo `AWS_HOST` nas configurações do repositório GitHub ainda continha o endereço de IP dinâmico antigo. O pipeline estava tentando se conectar a um endereço que não era mais válido. A solução foi atualizar o valor do segredo `AWS_HOST` com o novo IP Elástico (`35.153.92.36`). Após a atualização, o pipeline foi re-executado e completado com sucesso.
+
 ---
 
 ## ⏪ 4. Processo de Rollback
