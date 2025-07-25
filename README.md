@@ -60,7 +60,23 @@ Este fluxo garante que qualquer atualização no código da branch `main` seja r
 
 ## ⚠️ 3. Registro de Erros e Decisões Tomadas
 
-*(Documentaremos os desafios que superamos aqui)*
+Durante a configuração do ambiente e do pipeline, diversos desafios foram encontrados. A documentação a seguir detalha os principais problemas e as soluções aplicadas.
+
+#### 1. Política de Execução do PowerShell
+- **Problema:** Ao tentar verificar a versão do NPM com `npm -v`, o PowerShell bloqueou a execução do script, retornando um erro de política de segurança.
+- **Solução:** A política de execução do PowerShell foi alterada para `RemoteSigned` através do comando `Set-ExecutionPolicy RemoteSigned`, executado em um terminal com privilégios de administrador. Esta decisão permitiu a execução de scripts locais necessários para o desenvolvimento, mantendo a segurança contra scripts não assinados da internet.
+
+#### 2. `node_modules` no Controle de Versão
+- **Problema:** Na primeira tentativa de versionamento, a pasta `node_modules` (contendo milhares de dependências) foi acidentalmente adicionada à área de preparação do Git.
+- **Solução:** Foi criado um arquivo `.gitignore` na raiz do projeto para instruir o Git a ignorar a pasta `/node_modules`. Para corrigir a área de preparação, foi necessário usar o comando `git rm -rf --cached .` para limpar o cache do Git e depois um novo `git add .` para adicionar apenas os arquivos relevantes.
+
+#### 3. Permissões da Chave SSH no Windows
+- **Problema:** O cliente SSH se recusou a usar o arquivo `.pem` para conectar à instância EC2, retornando um erro de "permissões muito abertas" (`UNPROTECTED PRIVATE KEY FILE!`). Após uma tentativa de correção, o erro mudou para `Permission denied`.
+- **Solução:** Foi necessário um ajuste fino nas permissões de segurança do arquivo `.pem` no Windows. Utilizando a interface de propriedades do arquivo, a herança de permissões foi desabilitada, e todas as entidades de segurança foram removidas, exceto o usuário atual, que recebeu permissão de "Controle total". Isso garantiu que apenas o proprietário do arquivo pudesse lê-lo, satisfazendo a exigência do SSH.
+
+#### 4. Erro `Cannot GET /` Após o Deploy
+- **Problema:** Após o primeiro deploy bem-sucedido, acessar o IP do servidor no navegador resultava na mensagem `Cannot GET /`.
+- **Solução:** O diagnóstico revelou que não era um erro de deploy, mas sim de acesso à rota incorreta. A aplicação foi desenvolvida para responder apenas no endpoint `/status`. A solução foi acessar a URL completa (`http://<IP_DO_SERVIDOR>/status`), que validou o sucesso da implantação.
 
 ---
 
