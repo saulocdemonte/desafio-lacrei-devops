@@ -82,7 +82,29 @@ Durante a configuração do ambiente e do pipeline, diversos desafios foram enco
 
 ## ⏪ 4. Processo de Rollback
 
-*(Definiremos uma estratégia de rollback aqui)*
+A estratégia de rollback adotada para este projeto utiliza a funcionalidade nativa do GitHub Actions para re-executar um workflow bem-sucedido anterior.
+
+#### Passos para o Rollback Manual:
+
+1.  **Identificar o Deploy Estável:** Navegue até a aba **`Actions`** do repositório no GitHub. Na lista de execuções de workflow, identifique a última execução que foi concluída com sucesso (com um check verde ✅) e que corresponde à versão estável que se deseja restaurar.
+
+2.  **Re-executar o Workflow:** Clique nesta execução para ver seus detalhes. No canto superior direito da tela de detalhes, clique no botão **`Re-run all jobs`**.
+
+3.  **Confirmação:** O GitHub Actions iniciará uma nova execução do pipeline, mas utilizando exatamente o mesmo código-fonte (o mesmo commit) daquela versão anterior estável.
+
+4.  **Resultado:** Ao final da execução, o pipeline terá reconstruído a imagem Docker da versão antiga, a enviado para o Docker Hub com a tag `latest` e a implantado no servidor EC2. Isso efetivamente substitui a versão defeituosa pela última versão estável conhecida.
+
+#### Proposta de Melhoria para o futuro (Rollback Avançado)
+
+Uma abordagem mais rápida e robusta, ideal para ambientes de produção, seria aprimorar o pipeline para criar tags de imagem Docker versionadas (ex: usando a hash do commit Git, como `saulocdemonte/desafio-lacrei-app:a1b2c3d`).
+
+Com isso, o rollback seria quase instantâneo, executado diretamente no servidor via SSH, sem a necessidade de um novo build:
+
+# Conectar ao servidor via SSH
+# Parar e remover o contêiner atual
+docker stop lacrei-container && docker rm lacrei-container
+# Iniciar o contêiner com a tag da versão estável anterior
+docker run -d -p 80:3000 --name lacrei-container saulocdemonte/desafio-lacrei-app:<hash_do_commit_estavel>
 
 ---
 
