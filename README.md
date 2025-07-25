@@ -108,9 +108,28 @@ docker stop lacrei-container && docker rm lacrei-container
 
 # 3. Iniciar o contêiner com a tag da versão estável anterior
 docker run -d -p 80:3000 --name lacrei-container saulodemonte/desafio-lacrei-app:<hash_do_commit_estavel>
-
+'''
 ---
 
 ## 🛡️ 5. Checklist de Segurança Aplicado
 
-*(Listaremos as medidas de segurança implementadas)*
+As seguintes medidas de segurança foram implementadas neste projeto para garantir a integridade do ambiente e a proteção de dados sensíveis, conforme solicitado no desafio.
+
+- **Gerenciamento de Segredos (Secrets Management):**
+  - Todas as credenciais sensíveis — chaves de acesso da AWS, a chave SSH para o servidor EC2 e o token de acesso do Docker Hub — **não** foram escritas diretamente no código (`hardcoded`).
+  - Em vez disso, foram armazenadas de forma segura como **GitHub Secrets** criptografados. O pipeline de CI/CD acessa essas credenciais apenas em tempo de execução, garantindo que elas não fiquem expostas no repositório de código.
+
+- **Firewall de Rede (AWS Security Group):**
+  - A instância EC2 está protegida por um *Security Group* que atua como um firewall virtual.
+  - O acesso de rede foi configurado seguindo o **princípio do menor privilégio**, permitindo tráfego de entrada (`inbound`) apenas nas portas estritamente necessárias:
+    - `Porta 22 (SSH)`: Para acesso administrativo remoto.
+    - `Porta 80 (HTTP)`: Para acesso público à aplicação web.
+    - `Porta 443 (HTTPS)`: Reservada para a futura implementação de tráfego seguro.
+
+- **Autenticação Segura ao Servidor (SSH Key Pair):**
+  - O acesso ao terminal do servidor EC2 não é feito por senha, mas sim por um **par de chaves criptográficas (SSH Key Pair)**.
+  - A chave privada (`.pem`) é mantida em posse do desenvolvedor, garantindo que apenas entidades autorizadas possam acessar o servidor.
+
+- **Próximos Passos de Segurança (Propostas):**
+  - **HTTPS/TLS:** Implementar um certificado SSL/TLS (ex: via Let's Encrypt) para criptografar todo o tráfego entre o cliente e o servidor.
+  - **Usuário IAM Dedicado:** Criar um usuário IAM na AWS com permissões mínimas e específicas para as necessidades do pipeline, em vez de usar chaves de um usuário com privilégios mais amplos.
