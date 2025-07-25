@@ -46,4 +46,9 @@ jobs:
             docker pull saulodemonte/desafio-lacrei-app:latest
             docker stop lacrei-container || true
             docker rm lacrei-container || true
-            docker run -d -p 80:3000 --name lacrei-container saulodemonte/desafio-lacrei-app:latest
+            docker run -d \
+              -p 80:3000 \
+              -p 443:8443 \
+              -v /etc/letsencrypt:/etc/letsencrypt:ro \
+              --name lacrei-container \
+              saulodemonte/desafio-lacrei-app:latest
