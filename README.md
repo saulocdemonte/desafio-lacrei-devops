@@ -108,7 +108,8 @@ docker stop lacrei-container && docker rm lacrei-container
 
 # 3. Iniciar o contêiner com a tag da versão estável anterior
 docker run -d -p 80:3000 --name lacrei-container saulodemonte/desafio-lacrei-app:<hash_do_commit_estavel>
-'''
+
+``` 
 ---
 
 ## 🛡️ 5. Checklist de Segurança Aplicado
