@@ -34,7 +34,27 @@ As especificações da instância são:
 
 ## 🔄 2. Fluxo de CI/CD
 
-*(Descreveremos o pipeline aqui depois)*
+O pipeline de Integração e Entrega Contínua (CI/CD) foi implementado utilizando **GitHub Actions**. O objetivo é automatizar todo o processo, desde o envio do código até a implantação da aplicação no ambiente de staging.
+
+O fluxo de trabalho está definido no arquivo `.github/workflows/deploy-staging.yml` e é executado da seguinte forma:
+
+1.  **Gatilho (Trigger):** O pipeline é acionado automaticamente a cada `push` de código na branch `main` do repositório.
+
+2.  **Inicialização do Ambiente:** O GitHub Actions provisiona uma máquina virtual temporária (runner) com `ubuntu-latest` para executar as etapas da automação.
+
+3.  **Checkout do Código:** O código-fonte do projeto é baixado do repositório para a máquina virtual do runner.
+
+4.  **Login no Docker Hub:** O pipeline se autentica de forma segura no Docker Hub, utilizando um `username` e um `token` de acesso armazenados como GitHub Secrets (`DOCKERHUB_USERNAME` e `DOCKERHUB_TOKEN`).
+
+5.  **Build e Push da Imagem:** A imagem Docker da aplicação é construída a partir do `Dockerfile`. Após o build, essa imagem é marcada com a tag `latest` e enviada (`push`) para o repositório no Docker Hub.
+
+6.  **Deploy no Servidor EC2:** O passo final conecta-se via SSH ao servidor de staging na AWS, utilizando as credenciais armazenadas nos GitHub Secrets (`AWS_HOST`, `AWS_USERNAME`, `AWS_SSH_KEY`). No servidor, ele executa um script que realiza as seguintes ações:
+    * Baixa a imagem mais recente do Docker Hub (`docker pull`).
+    * Para o contêiner da versão antiga, caso esteja em execução (`docker stop`).
+    * Remove o contêiner antigo (`docker rm`).
+    * Inicia um novo contêiner com a imagem atualizada, mapeando a porta 80 (HTTP) do servidor para a porta 3000 da aplicação (`docker run`).
+
+Este fluxo garante que qualquer atualização no código da branch `main` seja refletida no ambiente de staging em poucos minutos, sem qualquer intervenção manual.
 
 ---
 
