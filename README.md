@@ -192,3 +192,5 @@ O fluxo de trabalho seria o seguinte:
 #### Considerações de Segurança
 - Toda a comunicação com a API da Asaas seria feita via HTTPS.
 - A chave de API da Asaas seria armazenada de forma segura como um **GitHub Secret** (`ASAAS_API_KEY`) e injetada na aplicação como uma variável de ambiente, nunca sendo exposta no código-fonte.
+
+-- Teste de trigger para o pipeline de staging --
