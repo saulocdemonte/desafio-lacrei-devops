@@ -1,5 +1,3 @@
-# CONTEÚDO COMPLETO E FINAL PARA O ARQUIVO .github/workflows/deploy-staging.yml
-
 name: Deploy em Staging
 
 on:
@@ -8,6 +6,11 @@ on:
 
 jobs:
   deploy:
+    # ADICIONAMOS ESTA SEÇÃO DE PERMISSÕES
+    permissions:
+      contents: read
+      packages: write
+
     runs-on: ubuntu-latest
 
     steps:
@@ -20,15 +23,15 @@ jobs:
       - name: Login no Docker Hub
         uses: docker/login-action@v3
         with:
-          username: ${{ secrets.DOCKERHUB_USERNAME }}
-          password: ${{ secrets.DOCKERHUB_TOKEN }}
+          username: ${{ secrets.DOCKHOR_USERNAME }}
+          password: ${{ secrets.DOCKHOR_PASSWORD }}
           
       - name: Build e Push da Imagem Docker
         uses: docker/build-push-action@v5
         with:
           context: .
           push: true
-          tags: saulodemonte/desafio-lacrei-app:latest
+          tags: saulocdemonte/desafio-lacrei-app:latest
           
       - name: Deploy no Servidor EC2
         uses: appleboy/ssh-action@master
@@ -37,7 +40,7 @@ jobs:
           username: ${{ secrets.AWS_USERNAME }}
           key: ${{ secrets.AWS_SSH_KEY }}
           script: |
-            docker pull saulodemonte/desafio-lacrei-app:latest
+            docker pull saulocdemonte/desafio-lacrei-app:latest
             docker stop lacrei-container || true
             docker rm lacrei-container || true
             docker run -d \
@@ -49,4 +52,4 @@ jobs:
               --log-opt awslogs-group=lacrei-staging-logs \
               --log-opt awslogs-create-group=true \
               --name lacrei-container \
-              saulodemonte/desafio-lacrei-app:latest
+              saulocdemonte/desafio-lacrei-app:latest

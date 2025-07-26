@@ -1,6 +1,5 @@
 name: Deploy em Produção
 
-# Gatilho: Este workflow roda quando uma TAG no formato v*.*.* é criada
 on:
   push:
     tags:
@@ -8,6 +7,11 @@ on:
 
 jobs:
   deploy:
+    # ADICIONAMOS ESTA SEÇÃO DE PERMISSÕES
+    permissions:
+      contents: read
+      packages: write
+
     runs-on: ubuntu-latest
 
     steps:
@@ -20,15 +24,14 @@ jobs:
       - name: Login no Docker Hub
         uses: docker/login-action@v3
         with:
-          username: ${{ secrets.DOCKERHUB_USERNAME }}
-          password: ${{ secrets.DOCKERHUB_TOKEN }}
+          username: ${{ secrets.DOCKHOR_USERNAME }}
+          password: ${{ secrets.DOCKHOR_PASSWORD }}
           
       - name: Build e Push da Imagem Docker com Tag de Versão
         uses: docker/build-push-action@v5
         with:
           context: .
           push: true
-          # A MUDANÇA ESTÁ AQUI: Usa a tag do Git como tag da imagem Docker
           tags: saulocdemonte/desafio-lacrei-app:${{ github.ref_name }}
           
       - name: Deploy no Servidor EC2 de Produção
@@ -38,7 +41,6 @@ jobs:
           username: ${{ secrets.AWS_USERNAME }}
           key: ${{ secrets.AWS_SSH_KEY }}
           script: |
-            # A MUDANÇA ESTÁ AQUI: Puxa e roda a imagem com a tag específica
             docker pull saulocdemonte/desafio-lacrei-app:${{ github.ref_name }}
             docker stop lacrei-container || true
             docker rm lacrei-container || true
