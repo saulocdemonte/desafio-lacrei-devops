@@ -1,33 +1,28 @@
+# CONTEÚDO COMPLETO E FINAL PARA O ARQUIVO .github/workflows/deploy-staging.yml
+
 name: Deploy em Staging
 
-# Gatilho: Este workflow roda a cada push na branch 'main'
 on:
   push:
     branches: [ main ]
 
 jobs:
   deploy:
-    # A máquina virtual que o GitHub vai usar para rodar nosso pipeline
     runs-on: ubuntu-latest
 
-    # O passo a passo da nossa automação
     steps:
-      # 1. Baixa o código do seu repositório para a máquina do GitHub
       - name: Checkout do código
         uses: actions/checkout@v4
 
-      # 2. Configura o Docker para poder construir a imagem
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
 
-      # 3. Loga no Docker Hub usando os segredos que criamos
       - name: Login no Docker Hub
         uses: docker/login-action@v3
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
           
-      # 4. Constrói a imagem Docker e envia para o Docker Hub
       - name: Build e Push da Imagem Docker
         uses: docker/build-push-action@v5
         with:
@@ -35,7 +30,6 @@ jobs:
           push: true
           tags: saulodemonte/desafio-lacrei-app:latest
           
-      # 5. Conecta no nosso servidor AWS e executa os comandos de deploy
       - name: Deploy no Servidor EC2
         uses: appleboy/ssh-action@master
         with:
@@ -50,5 +44,9 @@ jobs:
               -p 80:3000 \
               -p 443:8443 \
               -v /etc/letsencrypt:/etc/letsencrypt:ro \
+              --log-driver=awslogs \
+              --log-opt awslogs-region=us-east-1 \
+              --log-opt awslogs-group=lacrei-staging-logs \
+              --log-opt awslogs-create-group=true \
               --name lacrei-container \
               saulodemonte/desafio-lacrei-app:latest
