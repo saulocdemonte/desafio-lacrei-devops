@@ -143,16 +143,30 @@ As seguintes medidas de segurança foram implementadas neste projeto para garant
 
 ## 👁️ 6. Observabilidade (Logs e Monitoramento)
 
-Para garantir que a aplicação possa ser monitorada e que seus registros de eventos sejam persistentes e acessíveis, foi implementada uma estratégia de logging centralizado com o **AWS CloudWatch**.
+Para garantir que a aplicação possa ser monitorada e que seus registros de eventos sejam persistentes e acessíveis, foram implementadas estratégias de logging centralizado e alertas proativos.
+
+### Logging Centralizado com CloudWatch
 
 - **Problema Inicial:** Por padrão, os logs gerados pela aplicação (`console.log`) existiriam apenas dentro do contêiner Docker, sendo perdidos sempre que o contêiner fosse reiniciado ou substituído.
 
 - **Solução Implementada:**
-  1.  **Permissões (IAM Role):** Foi criada uma IAM Role (`EC2-CloudWatch-Logs-Role`) com a política `CloudWatchLogsFullAccess` e associada à instância EC2. Isso concedeu ao servidor a permissão necessária para enviar logs ao CloudWatch.
+  1.  **Permissões (IAM Role):** Foi criada uma IAM Role (`EC2-CloudWatch-Logs-Role`) com a política `CloudWatchLogsFullAccess` e associada à instância EC2, concedendo a ela a permissão necessária para enviar logs ao CloudWatch.
   2.  **Configuração do Docker:** O daemon do Docker no servidor foi configurado para utilizar o driver de log `awslogs`, direcionando os logs para a região `us-east-1`.
   3.  **Pipeline de Deploy:** O comando `docker run` no pipeline (`deploy-staging.yml`) foi atualizado para incluir flags explícitas de logging, garantindo que o contêiner envie seus logs para o grupo de logs **`lacrei-staging-logs`** no CloudWatch.
 
-- **Resultado:** Todos os logs da aplicação agora são transmitidos em tempo real e armazenados de forma segura e persistente no AWS CloudWatch. Isso permite a análise de eventos, a investigação de problemas e o monitoramento contínuo da saúde da aplicação, cumprindo o requisito de "logs acessíveis".
+- **Resultado:** Todos os logs da aplicação agora são transmitidos em tempo real e armazenados de forma segura e persistente no AWS CloudWatch, cumprindo o requisito de "logs acessíveis".
+
+### Monitoramento e Alertas Proativos (Bônus)
+
+Para complementar a observabilidade, foi implementado um sistema de alertas proativos para monitorar a saúde da instância EC2, cumprindo um dos itens bônus.
+
+- **Ferramentas:** AWS CloudWatch Alarms e AWS SNS (Simple Notification Service).
+- **Implementação:**
+  1.  **Canal de Notificação (SNS):** Foi criado um Tópico SNS (`lacrei-alarms`) e uma assinatura de email foi configurada e confirmada para servir como canal de notificação.
+  2.  **Alarme (CloudWatch):** Foi criado um Alarme no CloudWatch (`Alarme_CPU_Alta_Staging`) para monitorar a métrica `CPUUtilization` da instância.
+  3.  **Regra:** O alarme foi configurado para disparar caso a média de uso da CPU ultrapasse **70%** por um período contínuo de **5 minutos**.
+  4.  **Ação:** Ao ser disparado, o alarme envia uma notificação para o Tópico SNS, que por sua vez encaminha um alerta para o email inscrito.
+- **Resultado:** O ambiente agora conta com um monitoramento proativo que notifica a equipe sobre possíveis problemas de performance, permitindo uma ação rápida antes que os usuários sejam impactados.
 
 ---
 
