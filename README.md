@@ -153,3 +153,28 @@ Para garantir que a aplicação possa ser monitorada e que seus registros de eve
   3.  **Pipeline de Deploy:** O comando `docker run` no pipeline (`deploy-staging.yml`) foi atualizado para incluir flags explícitas de logging, garantindo que o contêiner envie seus logs para o grupo de logs **`lacrei-staging-logs`** no CloudWatch.
 
 - **Resultado:** Todos os logs da aplicação agora são transmitidos em tempo real e armazenados de forma segura e persistente no AWS CloudWatch. Isso permite a análise de eventos, a investigação de problemas e o monitoramento contínuo da saúde da aplicação, cumprindo o requisito de "logs acessíveis".
+
+---
+
+## 💰 Bônus: Proposta de Integração com Asaas
+
+Esta seção descreve uma arquitetura proposta para integrar a aplicação com o sistema de pagamentos Asaas, cumprindo o item bônus do desafio. A integração permitiria que a plataforma processasse pagamentos de forma automatizada.
+
+O fluxo de trabalho seria o seguinte:
+
+#### 1. Criação da Cobrança (Client -> Nosso Servidor -> Asaas)
+- O cliente, na interface da aplicação, iniciaria um processo de pagamento.
+- O frontend enviaria uma requisição para um novo endpoint no nosso backend (ex: `POST /api/pagamentos`).
+- Nosso servidor, ao receber a requisição, faria uma chamada segura (server-to-server) para a API da Asaas, enviando os dados do cliente e da cobrança.
+- A Asaas processaria a requisição, geraria a cobrança (seja por cartão de crédito, Pix ou boleto) e retornaria um ID de pagamento e/ou um link para nosso servidor.
+- Nosso servidor salvaria o ID da transação em seu banco de dados e retornaria o link de pagamento para o cliente finalizar a operação.
+
+#### 2. Notificação de Pagamento (Asaas -> Nosso Servidor via Webhook)
+- Para saber quando o pagamento foi efetivamente confirmado (especialmente em casos de boleto), configuraríamos um **Webhook** na plataforma da Asaas.
+- Apontaríamos este webhook para um endpoint específico da nossa API (ex: `POST /webhook/asaas/confirmacao`).
+- Quando um pagamento fosse confirmado, a Asaas enviaria uma notificação automática para este endpoint.
+- Nossa API receberia a notificação, validaria sua autenticidade e atualizaria o status do pagamento no nosso banco de dados, liberando o serviço para o cliente.
+
+#### Considerações de Segurança
+- Toda a comunicação com a API da Asaas seria feita via HTTPS.
+- A chave de API da Asaas seria armazenada de forma segura como um **GitHub Secret** (`ASAAS_API_KEY`) e injetada na aplicação como uma variável de ambiente, nunca sendo exposta no código-fonte.
