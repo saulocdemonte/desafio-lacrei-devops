@@ -138,3 +138,18 @@ As seguintes medidas de segurança foram implementadas neste projeto para garant
 - **Próximos Passos de Segurança (Propostas):**
   - **HTTPS/TLS:** Implementar um certificado SSL/TLS (ex: via Let's Encrypt) para criptografar todo o tráfego entre o cliente e o servidor.
   - **Usuário IAM Dedicado:** Criar um usuário IAM na AWS com permissões mínimas e específicas para as necessidades do pipeline, em vez de usar chaves de um usuário com privilégios mais amplos.
+
+  ---
+
+## 👁️ 6. Observabilidade (Logs e Monitoramento)
+
+Para garantir que a aplicação possa ser monitorada e que seus registros de eventos sejam persistentes e acessíveis, foi implementada uma estratégia de logging centralizado com o **AWS CloudWatch**.
+
+- **Problema Inicial:** Por padrão, os logs gerados pela aplicação (`console.log`) existiriam apenas dentro do contêiner Docker, sendo perdidos sempre que o contêiner fosse reiniciado ou substituído.
+
+- **Solução Implementada:**
+  1.  **Permissões (IAM Role):** Foi criada uma IAM Role (`EC2-CloudWatch-Logs-Role`) com a política `CloudWatchLogsFullAccess` e associada à instância EC2. Isso concedeu ao servidor a permissão necessária para enviar logs ao CloudWatch.
+  2.  **Configuração do Docker:** O daemon do Docker no servidor foi configurado para utilizar o driver de log `awslogs`, direcionando os logs para a região `us-east-1`.
+  3.  **Pipeline de Deploy:** O comando `docker run` no pipeline (`deploy-staging.yml`) foi atualizado para incluir flags explícitas de logging, garantindo que o contêiner envie seus logs para o grupo de logs **`lacrei-staging-logs`** no CloudWatch.
+
+- **Resultado:** Todos os logs da aplicação agora são transmitidos em tempo real e armazenados de forma segura e persistente no AWS CloudWatch. Isso permite a análise de eventos, a investigação de problemas e o monitoramento contínuo da saúde da aplicação, cumprindo o requisito de "logs acessíveis".
