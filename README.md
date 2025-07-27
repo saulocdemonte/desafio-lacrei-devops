@@ -2,6 +2,8 @@
 
 Repositório contendo a solução para o desafio técnico de DevOps da Lacrei Saúde. Este projeto implementa pipelines de CI/CD para o deploy automatizado de uma aplicação Node.js em ambientes de **Staging** e **Produção** na AWS, utilizando as melhores práticas de segurança e automação.
 
+> 📄 **Nota do Desenvolvedor:** Para um passo a passo detalhado de toda a jornada de construção deste projeto, incluindo cada comando, desafio e decisão técnica, por favor, veja o documento **[Jornada do Projeto](JORNADA_DO_PROJETO.md)**.
+
 ## 🚀 Tecnologias Utilizadas
 
 - **Aplicação:** Node.js com Express.js
@@ -114,3 +116,42 @@ Foi implementado um sistema de alertas com **AWS CloudWatch Alarms** e **AWS SNS
 ## 💰 Bônus: Proposta de Integração com Asaas
 
 Esta seção descreve a arquitetura proposta para integrar a aplicação com o sistema de pagamentos Asaas, incluindo a criação de cobranças via API e a confirmação via Webhooks. A chave de API seria gerenciada de forma segura via GitHub Secrets.
+
+---
+
+## 🧹 7. Procedimento de Limpeza (Cleanup)
+
+Para garantir a otimização de custos e a segurança após o período de avaliação deste desafio, todos os recursos provisionados na AWS devem ser removidos (descomissionados). O procedimento a seguir detalha a ordem correta para a limpeza completa do ambiente.
+
+**Ordem de Remoção:**
+
+1.  **Terminar as Instâncias EC2:**
+    - Navegar até o painel do EC2.
+    - Selecionar as instâncias `lacrei-staging-server` e `lacrei-production-server`.
+    - Clicar em `Instance state` > `Terminate instance`. A ação "Terminate" apaga permanentemente as máquinas virtuais e seus discos de armazenamento.
+
+2.  **Liberar os Endereços IP Elásticos:**
+    - No painel do EC2, ir para a seção `Elastic IPs`.
+    - Selecionar os dois IPs Fixos que foram alocados.
+    - Clicar em `Actions` > `Release Elastic IP addresses`. Este passo só pode ser feito após as instâncias que os utilizam serem terminadas.
+
+3.  **Excluir o Par de Chaves (Key Pair):**
+    - No painel do EC2, ir para a seção `Key Pairs`.
+    - Selecionar a chave `lacrei-devops-key` e excluí-la.
+
+4.  **Excluir o Grupo de Segurança (Security Group):**
+    - No painel do EC2, ir para a seção `Security Groups`.
+    - Selecionar o grupo `lacrei-webserver-sg` e excluí-lo.
+
+5.  **Excluir a Função IAM (IAM Role):**
+    - Navegar até o serviço **IAM**.
+    - Ir para `Roles` (Funções), selecionar a `EC2-CloudWatch-Logs-Role` e excluí-la.
+
+6.  **Excluir Recursos de Observabilidade:**
+    - Navegar até o serviço **CloudWatch**.
+    - Em `Logs` > `Log groups`, selecionar `lacrei-staging-logs` e excluí-lo.
+    - Em `Alarms` > `All alarms`, selecionar `Alarme_CPU_Alta_Staging` e excluí-lo.
+    - Navegar até o serviço **SNS**.
+    - Em `Topics`, selecionar `lacrei-alarms` e excluí-lo (isso também removerá a assinatura de email).
+
+A execução destes passos garante que todos os recursos criados para o projeto sejam removidos, evitando qualquer cobrança futura na conta da AWS.
