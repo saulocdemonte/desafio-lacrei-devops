@@ -46,6 +46,7 @@ As especificações para **ambas** as instâncias (`lacrei-staging-server` e `la
 O projeto utiliza dois pipelines de CI/CD distintos com **GitHub Actions**, um para cada ambiente. A grande melhoria implementada foi a migração do Docker Hub para o **GitHub Container Registry (GHCR)**, tornando a autenticação mais simples e segura.
 
 #### Diagrama do Fluxo de Deploy
+
 ```mermaid
 graph TD
     A[Desenvolvedor faz 'git push' na branch 'main'] --> B{Pipeline de Staging};
@@ -57,6 +58,8 @@ graph TD
     G --> H[Build & Push da Imagem :v1.x.x no GHCR];
     H --> I[Deploy no Servidor de Produção];
     I --> J[Smoke Test de Validação];
+```
+
 
 ### Pipeline de Staging (`deploy-staging.yml`)
 1.  **Gatilho (Trigger):** Acionado automaticamente a cada `push` na branch `main`.
