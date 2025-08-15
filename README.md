@@ -2,7 +2,7 @@
 
 ## 🎬 Demonstração em Vídeo
 
-[![Demonstração do Pipeline CI/CD](./video-thumb.png)](https://youtu.be/cgm0SXHBEsc)
+[![Demonstração do Pipeline CI/CD](./video-thumb1.png)](https://youtu.be/cgm0SXHBEsc)
 
 *Clique na imagem acima para assistir a apresentação completa do projeto, desde o `git push` até o deploy automatizado e seguro nos ambientes de Staging e Produção.*
 
