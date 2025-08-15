@@ -1,0 +1,44 @@
+name: Destruir Infraestrutura da AWS
+
+# ATENÇÃO: Este workflow é um exemplo e está desabilitado por padrão.
+# Ele deve ser acionado manualmente e com extremo cuidado.
+
+on:
+  # Permite acionamento manual pela interface do GitHub Actions
+  workflow_dispatch:
+    inputs:
+      confirm_destruction:
+        description: 'Digite "destruir" para confirmar a remoção de TODA a infraestrutura.'
+        required: true
+        default: 'nao-destruir'
+
+jobs:
+  terraform-destroy:
+    # Garante que o workflow só rode se a palavra de confirmação for digitada
+    if: github.event.inputs.confirm_destruction == 'destruir'
+    
+    runs-on: ubuntu-latest
+
+    # Adiciona as permissões necessárias para o Terraform se conectar à AWS
+    permissions:
+      id-token: write
+      contents: read
+
+    steps:
+      - name: Checkout do código
+        uses: actions/checkout@v4
+
+      - name: Configurar AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: arn:aws:iam::${{ secrets.AWS_ACCOUNT_ID }}:role/GitHubActions-Terraform-Role # Exemplo de Role
+          aws-region: us-east-1
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+
+      - name: Terraform Init
+        run: terraform init
+
+      - name: Terraform Destroy
+        run: terraform destroy -auto-approve

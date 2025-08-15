@@ -189,18 +189,20 @@ Para cumprir um dos itens bônus e adicionar uma camada de monitoramento proativ
 ### **Etapa 10: Finalização com Testes e Documentação**
 
 #### Objetivo:
-O objetivo da etapa final foi garantir a confiabilidade dos pipelines e consolidar todo o trabalho em uma documentação coesa e profissional. Isso incluiu a implementação de um teste de validação automatizado (conforme o requisito do desafio) e a criação dos documentos finais do projeto.
+O objetivo da etapa final foi garantir a confiabilidade dos pipelines e consolidar todo o trabalho em uma documentação coesa e profissional. Isso incluiu a implementação de um teste de validação automatizado, a criação dos documentos finais e uma demonstração de Infraestrutura como Código.
 
 #### Conceitos Chave:
-- **Smoke Test (Teste de Fumaça):** Um tipo de teste simples e rápido executado após um deploy para verificar se as funções mais críticas da aplicação estão funcionando. No nosso caso, o teste valida se o servidor web está no ar e respondendo na rota `/status`.
-- **`curl`:** Uma ferramenta de linha de comando para fazer requisições web. Utilizei a flag `-f` (fail), que faz o comando falhar se o servidor responder com um erro HTTP (como 404 ou 500), o que automaticamente falharia o pipeline.
+- **Smoke Test (Teste de Fumaça):** Um tipo de teste simples e rápido executado após um deploy para verificar se as funções mais críticas da aplicação estão funcionando.
+- **`curl`:** Uma ferramenta de linha de comando para fazer requisições web. Utilizei a flag `-f` (fail), que faz o comando falhar se o servidor responder com um erro HTTP.
+- **Infraestrutura como Código (IaC):** A prática de gerenciar e provisionar infraestrutura através de arquivos de definição. Utilizei o **Terraform** para demonstrar este conceito.
 - **Documentação Técnica (`README.md`):** O arquivo que serve como a porta de entrada e o manual principal do projeto.
 
 #### Passo a Passo Executado:
-1.  **Implementação do Smoke Test:** Adicionei um novo passo chamado "Validar Deploy" ao final de ambos os workflows (`deploy-staging.yml` e `deploy-production.yml`).
-2.  **Configuração do Teste:** O passo executa um `sleep 15` para aguardar a inicialização do contêiner, seguido por um `curl -f` que acessa a URL `/status` de cada ambiente respectivo (Staging ou Produção). O sucesso deste passo confirma que o deploy não apenas foi executado, mas resultou em uma aplicação funcional e acessível.
-3.  **Finalização da Documentação Principal:** Realizei a criação e revisão completa do arquivo `README.md` do repositório, garantindo que todas as seções obrigatórias e bônus do desafio fossem preenchidas com informações precisas, refletindo o estado final do projeto.
-4.  **Criação deste Documento (`JORNADA_DO_PROJETO.md`):** Como um passo final de excelência, criei este documento para servir como um tutorial detalhado e um registro de aprendizado de toda a jornada, desde a concepção até a entrega final, demonstrando a capacidade de documentar processos complexos.
+1.  **Implementação do Smoke Test:** Adicionei um novo passo chamado "Validar Deploy" ao final de ambos os workflows (`deploy-staging.yml` e `deploy-production.yml`), que executa um `curl` para validar a saúde da aplicação após o deploy.
+2.  **Demonstração de IaC com Terraform:** Criei o arquivo `main.tf`, que codifica toda a infraestrutura AWS que foi criada manualmente, servindo como uma planta baixa para a automação completa do provisionamento.
+3.  **Criação do Pipeline de Destruição (Bônus):** Para demonstrar o ciclo de vida completo do IaC, criei um pipeline de exemplo, `destroy-infra.yml`, que automatizaria a remoção de todos os recursos com o comando `terraform destroy`.
+4.  **Finalização da Documentação Principal:** Realizei a criação e revisão completa do arquivo `README.md` do repositório.
+5.  **Criação deste Documento (`JORNADA_DO_PROJETO.md`):** Como um passo final de excelência, criei este documento para servir como um tutorial detalhado e um registro de aprendizado de toda a jornada.
 
 ---
 

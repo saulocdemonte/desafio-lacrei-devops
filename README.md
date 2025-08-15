@@ -1,6 +1,12 @@
 # Desafio Técnico – DevOps na Lacrei Saúde
 
-Repositório contendo a solução para o desafio técnico de DevOps da Lacrei Saúde. Este projeto implementa pipelines de CI/CD para o deploy automatizado de uma aplicação Node.js em ambientes de **Staging** e **Produção** na AWS, utilizando as melhores práticas de segurança, observabilidade e automação.
+## 🎬 Demonstração em Vídeo
+
+[![Demonstração do Pipeline CI/CD](./video-thumb.png)](https://youtu.be/cgm0SXHBEsc)
+
+*Clique na imagem acima para assistir a apresentação completa do projeto, desde o `git push` até o deploy automatizado e seguro nos ambientes de Staging e Produção.*
+
+Repositório contendo a solução para o desafio técnico de DevOps da Lacrei Saúde. Este projeto implementa pipelines de CI/CD para o deploy automatizado de uma aplicação Node.js em ambientes de **Staging** e **Produção** na AWS, utilizando as melhores práticas de segurança, observabilidade e automação. Para referência, o enunciado original completo deste desafio técnico pode ser consultado no arquivo **[DESAFIO_ORIGINAL.md](DESAFIO_ORIGINAL.md)**.
 
 > 📄 **Nota do Desenvolvedor:** Para um passo a passo detalhado de toda a jornada de construção deste projeto, incluindo cada comando, desafio e decisão técnica, por favor, veja o documento **[Jornada do Projeto](JORNADA_DO_PROJETO.md)**.
 
@@ -8,8 +14,10 @@ Repositório contendo a solução para o desafio técnico de DevOps da Lacrei Sa
 
 ## 🔗 Links Rápidos e Ambientes
 
-- **Ambiente de Staging:** [https://saulo-devops-lacrei.duckdns.org/status](https://saulo-devops-lacrei.duckdns.org/status)
-- **Ambiente de Produção:** [https://saulo-prod-lacrei.duckdns.org/status](https://saulo-prod-lacrei.duckdns.org/status)
+- **Página de Entrega (Notion):** [Clique aqui para ver a apresentação completa do projeto](https://aerial-carol-4fd.notion.site/Desafio-T-cnico-DevOps-Lacrei-Sa-de-Saulo-Demonte-23d43848390e80728134caa9cd019ac5)
+- **Ambiente de Staging:** `https://saulo-devops-lacrei.duckdns.org/status` (Offline - Veja a demonstração no vídeo)
+- **Ambiente de Produção:** `https://saulo-prod-lacrei.duckdns.org/status` (Offline - Veja a demonstração no vídeo)
+- **Documentação Detalhada (A Jornada):** [Clique aqui para ler o passo a passo completo da construção do projeto.](JORNADA_DO_PROJETO.md)
 
 ## 🚀 Tecnologias Utilizadas
 
@@ -146,7 +154,21 @@ Esta seção descreve a arquitetura proposta para integrar a aplicação com o s
 
 ---
 
+---
+
+## 🏗️ Bônus: Infraestrutura como Código (IaC) com Terraform
+
+Para demonstrar uma prática de mercado essencial e o próximo passo natural para este projeto, toda a infraestrutura AWS criada manualmente foi codificada no arquivo **[`main.tf`](./main.tf)** usando **Terraform**.
+
+Em um cenário profissional, o ciclo de vida completo da infraestrutura seria gerenciado por comandos como `terraform apply` e `terraform destroy`, garantindo 100% de automação e rastreabilidade.
+
 ## 🧹 8. Procedimento de Limpeza (Cleanup)
 
-Para garantir a otimização de custos após o período de avaliação deste desafio, um procedimento detalhado de remoção de todos os recursos da AWS foi documentado. As instruções passo a passo se encontram na etapa final do documento **[Jornada do Projeto](JORNADA_DO_PROJETO.md)**.
+Para garantir a otimização de custos após o período de avaliação, todos os recursos provisionados na AWS devem ser removidos.
+
+#### Limpeza Manual (Método Utilizado)
+Um procedimento detalhado para a remoção manual e segura de cada recurso pelo console da AWS foi documentado na etapa final do arquivo **[Jornada do Projeto](JORNADA_DO_PROJETO.md)**.
+
+#### Limpeza Automatizada com IaC (Proposta)
+Para demonstrar o ciclo de vida completo da Infraestrutura como Código, foi criado um pipeline em **[`.github/workflows/destroy-infra.yml`](./.github/workflows/destroy-infra.yml)**. Em um cenário onde a infraestrutura é criada com `terraform apply`, este workflow automatizaria a destruição segura de todos os recursos com o comando `terraform destroy`, a ser acionado manualmente.
 
